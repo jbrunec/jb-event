@@ -33,7 +33,15 @@ export default function Navigation() {
       </Link>
 
       {currentUser ? (
-        <div>Signed in</div>
+        <Link
+          to="/settings"
+          variant="ghost"
+          className={navLinkClassName}
+          activeProps={{ className: activeNavLinkClassName }}
+        >
+          <User className="size-6" />
+          Settings
+        </Link>
       ) : (
         <Link
           to="/login"

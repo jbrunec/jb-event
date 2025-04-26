@@ -44,7 +44,7 @@ function LoginForm() {
       toast({
         title: "Logged in",
         description: "You have logged in",
-        variant: "destructive",
+        variant: "success",
       });
     },
     onError: (error) => {
@@ -90,7 +90,7 @@ function LoginForm() {
           )}
         />
         <Button type="submit" disabled={loginMutation.isPending}>
-          Add Comment
+          Sign in
         </Button>
       </form>
     </Form>
