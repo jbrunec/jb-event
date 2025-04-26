@@ -91,7 +91,7 @@ function LoginForm() {
           )}
         />
         <Button type="submit" disabled={loginMutation.isPending}>
-          Sign in
+          {loginMutation.isPending ? "Signing in..." : "Sign in"}
         </Button>
         <div className="flex items-center justify-center">
           <Link to="/register" variant="ghost">
