@@ -24,36 +24,36 @@ import Input from "@/features/shared/components/ui/Input";
 import { useToast } from "@/features/shared/hooks/useToast";
 import { trpc } from "@/router";
 
-import { changeEmailSchema } from "../../../../../shared/schema/auth";
+import { changePasswordSchema } from "../../../../../shared/schema/auth";
 
-type ChangeEmailDialogFormData = z.infer<typeof changeEmailSchema>;
+type ChangePasswordDialogFormData = z.infer<typeof changePasswordSchema>;
 
-function ChangeEmailDialog() {
+function ChangePasswordDialog() {
   const [isOpen, setIsOpen] = useState(false);
   const utils = trpc.useUtils();
   const { toast } = useToast();
-  const form = useForm<ChangeEmailDialogFormData>({
-    resolver: zodResolver(changeEmailSchema),
+  const form = useForm<ChangePasswordDialogFormData>({
+    resolver: zodResolver(changePasswordSchema),
     defaultValues: {
-      email: "",
-      password: "",
+      currentPassword: "",
+      newPassword: "",
     },
   });
 
-  const changeEmailMutation = trpc.auth.changeEmail.useMutation({
+  const changePasswordMutation = trpc.auth.changePassword.useMutation({
     onSuccess: async () => {
       await utils.auth.currentUser.invalidate();
       form.reset();
 
       setIsOpen(false);
       toast({
-        title: "Email changed",
-        description: "Your email has been changed",
+        title: "Password changed",
+        description: "Your password has been changed",
       });
     },
     onError: (error) => {
       toast({
-        title: "Failed to change email",
+        title: "Failed to change password",
         description: error.message,
         variant: "destructive",
       });
@@ -61,39 +61,22 @@ function ChangeEmailDialog() {
   });
 
   const handleSubmit = form.handleSubmit((data) => {
-    changeEmailMutation.mutate(data);
+    changePasswordMutation.mutate(data);
   });
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button>Update Email</Button>
+        <Button>Update Password</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Change Email</DialogTitle>
+          <DialogTitle>Change Password</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={handleSubmit} className="space-y-4">
             <FormField
               control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>New Email</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      type="email"
-                      placeholder="example@email.com"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="password"
+              name="currentPassword"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Current Password</FormLabel>
@@ -104,9 +87,24 @@ function ChangeEmailDialog() {
                 </FormItem>
               )}
             />
+            <FormField
+              control={form.control}
+              name="newPassword"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>New Password</FormLabel>
+                  <FormControl>
+                    <Input {...field} type="password" placeholder="*********" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <DialogFooter>
-              <Button type="submit" disabled={changeEmailMutation.isPending}>
-                {changeEmailMutation.isPending ? "Loading..." : "Change Email"}
+              <Button type="submit" disabled={changePasswordMutation.isPending}>
+                {changePasswordMutation.isPending
+                  ? "Loading..."
+                  : "Change Password"}
               </Button>
             </DialogFooter>
           </form>
@@ -116,4 +114,4 @@ function ChangeEmailDialog() {
   );
 }
 
-export default ChangeEmailDialog;
+export default ChangePasswordDialog;
