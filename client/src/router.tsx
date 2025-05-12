@@ -6,6 +6,9 @@ import {
   createTRPCReact,
   getQueryKey,
   httpBatchLink,
+  httpLink,
+  isNonJsonSerializable,
+  splitLink,
   TRPCClientError,
   TRPCLink,
 } from "@trpc/react-query";
@@ -58,15 +61,33 @@ function getHeaders() {
 export const trpcClient = trpc.createClient({
   links: [
     customLink,
-    httpBatchLink({
-      url: env.VITE_SERVER_BASE_URL,
-      fetch(url, options) {
-        return fetch(url, {
-          ...options,
-          credentials: "include",
-        });
+    splitLink({
+      condition(op) {
+        // check for context property `skipBatch`
+        return isNonJsonSerializable(op.input);
       },
-      headers: getHeaders(),
+      // when condition is true, use normal request
+      true: httpLink({
+        url: env.VITE_SERVER_BASE_URL,
+        fetch(url, options) {
+          return fetch(url, {
+            ...options,
+            credentials: "include",
+          });
+        },
+        headers: getHeaders(),
+      }),
+      // when condition is false, use batching
+      false: httpBatchLink({
+        url: env.VITE_SERVER_BASE_URL,
+        fetch(url, options) {
+          return fetch(url, {
+            ...options,
+            credentials: "include",
+          });
+        },
+        headers: getHeaders(),
+      }),
     }),
   ],
 });

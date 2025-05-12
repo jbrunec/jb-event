@@ -1,4 +1,4 @@
-import { Home, Search, User } from "lucide-react";
+import { Home, Search, Settings, User } from "lucide-react";
 
 import { useCurrentUser } from "@/features/auth/hooks/useCurrentUser";
 
@@ -31,6 +31,18 @@ export default function Navigation() {
         <Search className="size-6" />
         Search
       </Link>
+      {currentUser && (
+        <Link
+          to="/users/$userId"
+          params={{ userId: currentUser.id }}
+          variant="ghost"
+          className={navLinkClassName}
+          activeProps={{ className: activeNavLinkClassName }}
+        >
+          <User className="size-6" />
+          Profile
+        </Link>
+      )}
 
       {currentUser ? (
         <Link
@@ -39,7 +51,7 @@ export default function Navigation() {
           className={navLinkClassName}
           activeProps={{ className: activeNavLinkClassName }}
         >
-          <User className="size-6" />
+          <Settings className="size-6" />
           Settings
         </Link>
       ) : (
