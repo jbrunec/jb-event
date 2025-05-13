@@ -1,6 +1,9 @@
 import { LinkIcon } from "lucide-react";
 
+import { useCurrentUser } from "@/features/auth/hooks/useCurrentUser";
+import { Button } from "@/features/shared/components/ui/Button";
 import Card from "@/features/shared/components/ui/Card";
+import Link from "@/features/shared/components/ui/Link";
 
 import { ExperienceForDetails } from "../types";
 
@@ -16,6 +19,7 @@ function ExperienceDetails({ experience }: ExperienceDetailsProps) {
         <ExperienceDetailsHeader experience={experience} />
         <ExperienceDetailsContent experience={experience} />
         <ExperienceDetailsMeta experience={experience} />
+        <ExperienceDetailsActionButtons experience={experience} />
       </div>
     </Card>
   );
@@ -82,6 +86,43 @@ function ExperienceDetailsMeta({ experience }: ExperienceDetailsMetaProps) {
           </a>
         </div>
       )}
+    </div>
+  );
+}
+
+type ExperienceDetailsActionButtonsProps = Pick<
+  ExperienceDetailsProps,
+  "experience"
+>;
+
+function ExperienceDetailsActionButtons({
+  experience,
+}: ExperienceDetailsActionButtonsProps) {
+  const { currentUser } = useCurrentUser();
+
+  const isPostOwner = currentUser?.id === experience.userId;
+
+  if (isPostOwner) {
+    return <ExperienceOwnerButtons experience={experience} />;
+  }
+
+  return null;
+}
+
+type ExperienceOwnerButtonsProps = Pick<ExperienceDetailsProps, "experience">;
+
+function ExperienceOwnerButtons({ experience }: ExperienceOwnerButtonsProps) {
+  return (
+    <div className="flex gap-2">
+      <Button variant="outline" asChild>
+        <Link
+          to="/experiences/$experienceId/edit"
+          params={{ experienceId: experience.id }}
+          variant="ghost"
+        >
+          Edit
+        </Link>
+      </Button>
     </div>
   );
 }
