@@ -1,4 +1,4 @@
-import { LinkIcon, MessageSquare } from "lucide-react";
+import { LinkIcon, MessageSquare, Users } from "lucide-react";
 
 import { useCurrentUser } from "@/features/auth/hooks/useCurrentUser";
 import { Button } from "@/features/shared/components/ui/Button";
@@ -109,7 +109,17 @@ function ExperienceCardMetricButtons({
   experience,
 }: ExperienceCardMetricButtonsProps) {
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-4">
+      <Button variant="link" asChild>
+        <Link
+          to="/experiences/$experienceId/attendees"
+          params={{ experienceId: experience.id }}
+          variant="ghost"
+        >
+          <Users className="size-5" />
+          <span>{experience.attendeesCount}</span>
+        </Link>
+      </Button>
       <Button variant="link" asChild>
         <Link
           to="/experiences/$experienceId"
