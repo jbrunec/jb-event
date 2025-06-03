@@ -7,12 +7,13 @@ import ExperienceList from "@/features/experiences/components/ExperienceList";
 import ErrorComponent from "@/features/shared/components/ErrorComponent";
 import { InfiniteScroll } from "@/features/shared/components/InifiniteScroll";
 import Card from "@/features/shared/components/ui/Card";
+import Link from "@/features/shared/components/ui/Link";
 import UserAvatar from "@/features/users/components/UserAvatar";
 import { UserEditDialog } from "@/features/users/components/UserEditDialog";
 import { UserForDetails } from "@/features/users/types";
 import { isTRPCClientError, trpc } from "@/router";
 
-export const Route = createFileRoute("/users/$userId")({
+export const Route = createFileRoute("/users/$userId/")({
   component: UserPage,
   params: {
     parse: (params) => ({
@@ -58,6 +59,7 @@ function UserPage() {
           <p className="text-neutral-600 dark:text-neutral-400">{user.bio}</p>
         )}
         <UserProfileButton user={user} />
+        <UserProfileStats user={user} />
       </Card>
 
       <UserProfileHostStats user={user} />
@@ -75,6 +77,47 @@ function UserPage() {
         />
       </InfiniteScroll>
     </main>
+  );
+}
+
+type UserProfileStatsProps = {
+  user: UserForDetails;
+};
+
+function UserProfileStats({ user }: UserProfileStatsProps) {
+  const stats = [
+    {
+      label: "Followers",
+      value: user.followersCount,
+      to: "/users/$userId/followers",
+      params: { userId: user.id },
+    },
+    {
+      label: "Following",
+      value: user.followingCount,
+      to: "/users/$userId/following",
+      params: { userId: user.id },
+    },
+  ] as const;
+  return (
+    <div className="flex w-full justify-center gap-12 border-y-2 border-neutral-200 py-4 dark:border-neutral-800">
+      {stats.map((stat) => (
+        <Link
+          key={stat.label}
+          to={stat.to}
+          params={stat.params}
+          variant="ghost"
+          className="text-center"
+        >
+          <div className="dark:text-primary-500 text-secondary-500 text-center text-2xl font-bold">
+            {stat.value}
+          </div>
+          <div className="text-sm text-neutral-600 dark:text-neutral-400">
+            {stat.label}
+          </div>
+        </Link>
+      ))}
+    </div>
   );
 }
 
