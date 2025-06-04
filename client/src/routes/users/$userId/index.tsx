@@ -10,6 +10,7 @@ import Card from "@/features/shared/components/ui/Card";
 import Link from "@/features/shared/components/ui/Link";
 import UserAvatar from "@/features/users/components/UserAvatar";
 import { UserEditDialog } from "@/features/users/components/UserEditDialog";
+import { UserFollowButton } from "@/features/users/components/UserFollowButton";
 import { UserForDetails } from "@/features/users/types";
 import { isTRPCClientError, trpc } from "@/router";
 
@@ -58,8 +59,8 @@ function UserPage() {
         {user.bio && (
           <p className="text-neutral-600 dark:text-neutral-400">{user.bio}</p>
         )}
-        <UserProfileButton user={user} />
         <UserProfileStats user={user} />
+        <UserProfileButton user={user} />
       </Card>
 
       <UserProfileHostStats user={user} />
@@ -144,9 +145,10 @@ type UserProfileButtonProps = {
 function UserProfileButton({ user }: UserProfileButtonProps) {
   const { currentUser } = useCurrentUser();
   const isCurrentUser = currentUser?.id === user.id;
-  if (isCurrentUser) {
-    return <UserEditDialog user={user} />;
-  }
 
-  return null;
+  return isCurrentUser ? (
+    <UserEditDialog user={user} />
+  ) : (
+    <UserFollowButton targetUserId={user.id} isFollowing={user.isFollowing} />
+  );
 }

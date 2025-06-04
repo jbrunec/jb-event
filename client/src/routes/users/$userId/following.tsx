@@ -2,6 +2,7 @@ import { createFileRoute, notFound } from "@tanstack/react-router";
 import { z } from "zod";
 
 import { InfiniteScroll } from "@/features/shared/components/InifiniteScroll";
+import { UserFollowButton } from "@/features/users/components/UserFollowButton";
 import { UserList } from "@/features/users/components/UserList";
 import { isTRPCClientError, trpc } from "@/router";
 
@@ -43,6 +44,12 @@ function UserFollowingPage() {
         <UserList
           users={pages.flatMap((page) => page.items)}
           isLoading={followingQuery.isFetchingNextPage}
+          rightComponent={(user) => (
+            <UserFollowButton
+              targetUserId={user.id}
+              isFollowing={user.isFollowing}
+            />
+          )}
         />
       </InfiniteScroll>
     </main>

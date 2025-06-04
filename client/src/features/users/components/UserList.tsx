@@ -1,21 +1,24 @@
+import { ReactNode } from "react";
+
 import Spinner from "@/features/shared/components/ui/Spinner";
 
-import { UserForList } from "../types";
+import { UserForList, UserWithUserContext } from "../types";
 import { UserCard } from "./UserCard";
 
 type UserListProps = {
   users: UserForList[];
-  isLoading: boolean;
+  isLoading?: boolean;
+  rightComponent?: (user: UserWithUserContext) => ReactNode;
 };
 
-export function UserList({ users, isLoading }: UserListProps) {
+export function UserList({ users, isLoading, rightComponent }: UserListProps) {
   return (
-    <div className="space-y-4">
+    <div className="flex flex-col gap-4">
       {users.map((user) => (
-        <UserCard key={user.id} user={user} />
+        <UserCard key={user.id} user={user} rightComponent={rightComponent} />
       ))}
       {isLoading && (
-        <div className="flex justify-center">
+        <div className="flex justify-center py-4">
           <Spinner />
         </div>
       )}
